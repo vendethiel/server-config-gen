@@ -4,6 +4,7 @@ defmodule ServerConfigGen do
   """
 
   use Application
+  use Pipe
 
   def start(_type, _args) do
     ExFSWatch.Supervisor.start_link
@@ -19,7 +20,10 @@ defmodule ServerConfigGen do
     relative_path = Path.relative_to_cwd(file_path)
     IO.puts "Parsing #{relative_path}"
 
-    content = File.read!(file_path) |> Parser.parse |> Generator.generate
-    IO.binread "#{file_path}.apache"
+    content = pipe_matching {:ok, _},
+    File.read(file_path)
+    |> Parser.parse
+    |> Generator.generate
+    IO.binwrite("#{file_path}.apache", content)
   end
 end
