@@ -5,6 +5,8 @@ defmodule ServerConfigGen do
 
   use Application
   use Pipe
+  alias ServerConfigGen.Parser
+  alias ServerConfigGen.Generator
 
   def start(_type, _args) do
     ExFSWatch.Supervisor.start_link
@@ -17,13 +19,27 @@ defmodule ServerConfigGen do
   end
 
   def callback(file_path, _events) do
-    relative_path = Path.relative_to_cwd(file_path)
-    IO.puts "Parsing #{relative_path}"
+    IO.puts("Parsing #{Path.relative_to_cwd(file_path)}")
+    file_name = Path.basename(file_path)
 
-    content = pipe_matching {:ok, _},
+    write = fn
+      ({:ok, content}) ->
+        case File.write("generated/#{file_name}.generated", content) do
+          :ok -> {:ok, ""}
+          e -> e
+        end
+      (x) -> IO.puts ":("
+    end
+
+    case (pipe_matching {:ok, _},
     File.read(file_path)
     |> Parser.parse
     |> Generator.generate
-    IO.binwrite("#{file_path}.apache", content)
+    |> write.()) do
+      {:ok, _} -> IO.puts "Okay, file generated!"
+      {:error, e} ->
+        IO.puts("Error parsing #{file_name}: #{Exception.format_banner(:error, e, System.stacktrace)}")
+        IO.puts inspect(System.stacktrace)
+    end
   end
 end

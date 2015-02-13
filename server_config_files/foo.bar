@@ -1,0 +1,6 @@
+kind=apache
+
+port=80
+
+[redirect]
+url=http://foobar

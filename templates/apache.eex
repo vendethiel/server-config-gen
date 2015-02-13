@@ -1,0 +1,7 @@
+<VirtualHost *:<%= @port %>>
+  Listen <%= @port %>
+
+  <%= if @redirect do %>
+  Redirect <%= if Dict.has_key?(@redirect, :code), do: @redirect[:code], else: "" %> <%= @redirect[:url] %>
+  <% end %>
+</VirtualHost>
