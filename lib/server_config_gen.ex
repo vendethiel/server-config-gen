@@ -31,15 +31,12 @@ defmodule ServerConfigGen do
       (x) -> IO.puts ":("
     end
 
-    case (pipe_matching {:ok, _},
-    File.read(file_path)
-    |> Parser.parse
-    |> Generator.generate
-    |> write.()) do
-      {:ok, _} -> IO.puts "Okay, file generated!"
-      {:error, e} ->
-        IO.puts("Error parsing #{file_name}: #{Exception.format_banner(:error, e, System.stacktrace)}")
-        IO.puts inspect(System.stacktrace)
+    {:ok, content} = File.read(file_path)
+    {:ok, vars} = Parser.parse(Path.extname(file_name), content)
+    {:ok, generated_content} = Generator.generate(vars)
+    {:ok, _} = File.write("generated/#{file_name}.generated", generated_content)
+    #IO.puts("Error parsing #{file_name}: #{Exception.format_banner(:error, e, System.stacktrace)}")
+    #IO.puts inspect(System.stacktrace)
     end
   end
 end
