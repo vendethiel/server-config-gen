@@ -22,15 +22,6 @@ defmodule ServerConfigGen do
     IO.puts("Parsing #{Path.relative_to_cwd(file_path)}")
     file_name = Path.basename(file_path)
 
-    write = fn
-      ({:ok, content}) ->
-        case File.write("generated/#{file_name}.generated", content) do
-          :ok -> {:ok, ""}
-          e -> e
-        end
-      (x) -> IO.puts ":("
-    end
-
     {:ok, content} = File.read(file_path)
     {:ok, vars} = Parser.parse(Path.extname(file_name), content)
     {:ok, generated_content} = Generator.generate(vars)
