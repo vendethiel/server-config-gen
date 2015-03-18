@@ -28,6 +28,5 @@ defmodule ServerConfigGen do
     {:ok, _} = File.write("generated/#{file_name}.generated", generated_content)
     #IO.puts("Error parsing #{file_name}: #{Exception.format_banner(:error, e, System.stacktrace)}")
     #IO.puts inspect(System.stacktrace)
-    end
   end
 end
