@@ -21,11 +21,16 @@ defmodule ServerConfigGen do
   def callback(file_path, _events) do
     IO.puts("Parsing #{Path.relative_to_cwd(file_path)}")
     file_name = Path.basename(file_path)
+    ext = String.lstrip(Path.extname(file_name), ?.)
 
-    {:ok, content} = File.read(file_path)
-    {:ok, vars} = Parser.parse(Path.extname(file_name), content)
-    {:ok, generated_content} = Generator.generate(vars)
-    {:ok, _} = File.write("generated/#{file_name}.generated", generated_content)
+    try do
+      {:ok, content} = File.read(file_path)
+      {:ok, vars} = Parser.parse(ext, content)
+      {:ok, generated_content} = Generator.generate(vars)
+      {:ok, _} = File.write("generated/#{file_name}.generated", generated_content)
+    rescue
+      e in MatchError -> IO.write("Erreur: #{Exception.message(e)}")
+    end
     #IO.puts("Error parsing #{file_name}: #{Exception.format_banner(:error, e, System.stacktrace)}")
     #IO.puts inspect(System.stacktrace)
   end

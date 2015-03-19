@@ -36,13 +36,11 @@ defmodule ADT do
   #
   #  foo(a: "default")
   defp generate_defmodule({name, fields}) do
-    a = quote do
+    quote do
       defmodule unquote(name) do
         defstruct unquote(fields)
       end
     end
-    IO.inspect Macro.to_string(a)
-    a
   end
 
   #Helper code that really shouldn't be here.

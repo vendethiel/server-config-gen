@@ -7,4 +7,6 @@ defmodule ServerConfigGen.Parser do
     # Tomlex returns a map, but need a keywords list for eex
     Err.try_wrap(fn -> Map.to_list(Tomlex.load(content)) end)
   end
+
+  def parse(ext, _), do: {:error, "no parser available for #{ext}"}
 end
