@@ -26,6 +26,8 @@ defmodule ADT do
     # fields is [name: val, name: val]
     module_name = name |> to_string |> format_module_name
     # then, generate a module name from the string
+    # TODO (see generator.ex), namespace the name correctly, as it doesn't currently.
+    #       probably use "caller"
     module_name = Module.concat([module_name])
 
     [{module_name, content}]

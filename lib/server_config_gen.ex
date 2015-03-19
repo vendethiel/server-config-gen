@@ -26,12 +26,14 @@ defmodule ServerConfigGen do
     try do
       {:ok, content} = File.read(file_path)
       {:ok, vars} = Parser.parse(ext, content)
+      IO.puts "config parsed..."
       {:ok, generated_content} = Generator.generate(vars)
-      {:ok, _} = File.write("generated/#{file_name}.generated", generated_content)
+      IO.puts "content generated... writing"
+      :ok = File.write("generated/#{file_name}.generated", generated_content)
     rescue
-      e in MatchError -> IO.write("Erreur: #{Exception.message(e)}")
+      e in MatchError ->
+        #IO.write("Erreur: #{Exception.message(e)}")
+        IO.puts("Error parsing #{file_name}: #{Exception.format_banner(:error, e, System.stacktrace)}")
     end
-    #IO.puts("Error parsing #{file_name}: #{Exception.format_banner(:error, e, System.stacktrace)}")
-    #IO.puts inspect(System.stacktrace)
   end
 end

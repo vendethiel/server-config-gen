@@ -1,5 +1,6 @@
 defmodule ServerConfigGen.Generator do
   require ADT
+  # TODO it seems ADT doesn't define the structs *inside* of Generator
   ADT.define eex_template(variables: %{}) | yield_template(text: "")
 
   @templates %{
@@ -21,23 +22,4 @@ defmodule ServerConfigGen.Generator do
 
   defp template_for("eex", config), do: %EexTemplate{variables: config}
   defp template_for("txt", %{text: text}), do: %YieldTemplate{text: text}
-
-  # Why a protocol for this?
-  # Mostly to toy around with prototypes and ADTs, really.
-  # But also because it allows for helpers (like template_path_for)
-  defprotocol TemplateRenderer do
-    def render(t, content)
-  end
-
-  defimpl TemplateRenderer, for: EexTemplate do
-    def render(t, content) do
-      EEx.eval_string(content, [assigns: t.variables])
-    end
-  end
-
-  defimpl TemplateRenderer, for: YieldTemplate do
-    def render(t, content) do
-      String.replace(content, "{{YIELD}}", t.text)
-    end
-  end
 end
