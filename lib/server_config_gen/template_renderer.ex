@@ -1,6 +1,3 @@
-# Why a protocol for this?
-# Mostly to toy around with prototypes and ADTs, really.
-# But also because it allows for helpers (like template_path_for)
 defprotocol TemplateRenderer do
   def render(t, content)
 end
