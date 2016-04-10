@@ -23,17 +23,16 @@ defmodule ServerConfigGen do
     file_name = Path.basename(file_path)
     ext = String.lstrip(Path.extname(file_name), ?.)
 
-    try do
-      {:ok, content} = File.read(file_path)
-      {:ok, vars} = Parser.parse(ext, content)
-      IO.puts "config parsed..."
-      {:ok, generated_content} = Generator.generate(vars)
-      IO.puts "content generated... writing"
-      :ok = File.write("generated/#{file_name}.generated", generated_content)
-    rescue
-      e in MatchError ->
-        #IO.write("Erreur: #{Exception.message(e)}")
-        IO.puts("Error parsing #{file_name}: #{Exception.format_banner(:error, e, System.stacktrace)}")
-    end
+    with {:ok, content} <- File.read(file_path),
+         {:ok, vars} <- Parser.parse(ext, content),
+         IO.puts("Parsed #{file_path}"),
+         {:ok, generated_content} <- Generator.generate(vars),
+         IO.puts("Generated #{file_path}"),
+         :ok <- File.write("generated/#{file_name}.generated", generated_content)
+         do
+           IO.puts("Wrote #{file_name}")
+         else
+           IO.puts("Error: unable to configurize #{file_path}")
+         end
   end
 end
