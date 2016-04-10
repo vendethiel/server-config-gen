@@ -10,27 +10,27 @@ defmodule ADT do
     iex> %Foo(a: "my value")
   """
   defmacro define(parts) do
-    parts |> format_parts |> Enum.map(&generate_defmodule/1)
+    parts |> format_parts(__CALLER__) |> Enum.map(&generate_defmodule/1)
   end
 
   #Flatten "one | two | three" ("one | (two | three)" in the AST
   #to "[one, two, three]"
-  defp format_parts({:|, _, [elem, rest]}) do
-    format_parts(elem) ++ format_parts(rest)
+  defp format_parts({:|, _, [elem, rest]}, caller) do
+    format_parts(elem, caller) ++ format_parts(rest, caller)
   end
-  defp format_parts({name, _, []}) do
-    raise "Unable to generate ADT variant #{name}: no fields declared"
-  end
-  defp format_parts({name, _, [content]}) do
+  defp format_parts({name, _, [content]}, caller) do
     # name is lowercase atom, need to capitalize + re-atom
     # fields is [name: val, name: val]
     module_name = name |> to_string |> format_module_name
     # then, generate a module name from the string
     # TODO (see generator.ex), namespace the name correctly, as it doesn't currently.
     #       probably use "caller"
-    module_name = Module.concat([module_name])
+    module_name = Module.concat([caller.module, module_name])
 
     [{module_name, content}]
+  end
+  defp format_parts({name, _, []}, caller) do
+    raise "Unable to generate ADT variant #{name}: no fields declared"
   end
 
   #Generates an AST for the module definition
