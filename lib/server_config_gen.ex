@@ -13,7 +13,7 @@ defmodule ServerConfigGen do
   end
 
   use ExFSWatch, dirs: ["server_config_files"]
-  
+
   def callback(:stop) do
     IO.puts "stop pls"
   end

@@ -4,14 +4,13 @@ defmodule ServerConfigGen.Mixfile do
   def project do
     [app: :server_config_gen,
      version: "0.0.1",
-     elixir: "1.0.2",
+     elixir: "1.2.3",
      deps: deps]
   end
 
   def application do
     [
-      applications: [],
-      mod: {ServerConfigGen, []}
+      applications: [:exfswatch],
     ]
   end
 
