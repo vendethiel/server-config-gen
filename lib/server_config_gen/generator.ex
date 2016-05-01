@@ -1,6 +1,5 @@
 defmodule ServerConfigGen.Generator do
   require ADT
-  # TODO it seems ADT doesn't define the structs *inside* of Generator
   ADT.define eex_template(variables: %{}) | yield_template(text: "")
 
   @templates %{
