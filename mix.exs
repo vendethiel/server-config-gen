@@ -19,6 +19,7 @@ defmodule ServerConfigGen.Mixfile do
       {:tomlex, "~> 0.0.4"},
       {:pipe, "~> 0.0.1"},
       {:exfswatch, "~> 0.0.1"},
+      {:adt, "~> 0.0.2"},
     ]
   end
 end
